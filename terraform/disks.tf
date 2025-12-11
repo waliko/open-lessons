@@ -1,5 +1,5 @@
-resource "yandex_compute_image" "deb11" {
-  source_family = "debian-11"
+resource "yandex_compute_image" "deb12" {
+  source_family = "debian-12"
 }
 
 resource "yandex_compute_disk" "boot-disk-vm1" {
@@ -7,5 +7,5 @@ resource "yandex_compute_disk" "boot-disk-vm1" {
 	type = "network-hdd"
 	zone = "${var.av_zone}"
 	size = "${var.boot_disk_size}"
-	image_id = yandex_compute_image.deb11.id
+	image_id = yandex_compute_image.deb12.id
 }

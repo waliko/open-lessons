@@ -19,6 +19,21 @@ resource "yandex_compute_instance" "rest-api-vm1" {
 
 	metadata = {
 		fqdn = "rest-api-vm1.${var.service_dns_zone}"
-		user-data = "#cloud-config\nusers:\n  - name: waliko\n    groups: sudo\n    shell: /bin/bash\n    sudo: 'ALL=(ALL) NOPASSWD:ALL'\n    ssh-authorized-keys:\n      - ${file("~/.ssh/id_rsa.pub")}"
+		user-data = "#cloud-config\nusers:\n  - name: toor\n    groups: sudo\n    shell: /bin/bash\n    sudo: 'ALL=(ALL) NOPASSWD:ALL'\n    ssh-authorized-keys:\n      - ${file("~/.ssh/id_ed25519.pub")}"
 	}
+
+  connection {
+    host = "${self.network_interface.0.nat_ip_address}"
+    type = "ssh"
+    user = "toor"
+    private_key = "${file("~/.ssh/id_ed25519")}"
+  }
+
+  provisioner "remote-exec" {
+    script = "scripts/wait-vm.sh"
+  }
+
+  provisioner "local-exec" {
+    command = "cd ../provision && ansible-playbook -i '${self.network_interface.0.nat_ip_address},' vm1.yml"
+  }
 }
